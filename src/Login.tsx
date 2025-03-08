@@ -1,47 +1,80 @@
-import { useState } from "react";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginInfoSchema, LoginInfoType } from "./schemas/login.schema";
+import {
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+} from "@mui/material";
 
-export const LoginForm = () => {
+export const LoginForm = () =>  {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginInfoType>({ resolver: zodResolver(LoginInfoSchema) });
-  const [error, setError] = useState([]);
+  } = useForm<LoginInfoType>({
+    reValidateMode: "onSubmit",
+    resolver: zodResolver(LoginInfoSchema),
+  });
+
+  const onSubmit = (data: LoginInfoType) => {
+    console.log("Login Data:", data);
+  };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <form
-        onSubmit={handleSubmit(() => {
-          console.log(errors.password);
-        })}
-        className="bg-white p-6 rounded-lg shadow-md w-80"
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
+      }}
+    >
+      <Card
+        style={{
+          width: 400,
+          padding: 20,
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        }}
       >
-        <h2 className="text-xl font-semibold mb-4">ログイン</h2>
-        <div className="mb-4">
-          <label className="block text-gray-700">メールアドレス</label>
-          <input type="email" {...register("userId")} />
-          {errors.userId && (
-            <p className="text-red-500 text-sm mb-2">{errors.userId.message}</p>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">パスワード</label>
-          <input type="password" {...register("password")} />
-          {errors.password && (
-            <p className="text-red-500 text-sm mb-2">{errors.password.message}</p>
-          )}
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded disabled:opacity-50"
-        >
-          ログイン
-        </button>
-      </form>
+        <CardHeader
+          title={
+            <Typography variant="h6" align="center">
+              ログイン
+            </Typography>
+          }
+        />
+        <CardContent>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          >
+            <TextField
+              label="メールアドレス"
+              type="email"
+              {...register("userId")}
+              error={!!errors.userId}
+              helperText={errors.userId?.message}
+              fullWidth
+            />
+            <TextField
+              label="パスワード"
+              type="password"
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              fullWidth
+            />
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              ログイン
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
-};
+}
