@@ -1,27 +1,17 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginInfoSchema, LoginInfoType } from "./schemas/login.schema";
 import {
-  TextField,
   Button,
   Card,
   CardContent,
   CardHeader,
   Typography,
 } from "@mui/material";
+import { useAuth0 } from "@auth0/auth0-react";
 
-export const LoginForm = () =>  {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginInfoType>({
-    reValidateMode: "onSubmit",
-    resolver: zodResolver(LoginInfoSchema),
-  });
+export const LoginForm = () => {
+  const { loginWithRedirect } = useAuth0();
 
-  const onSubmit = (data: LoginInfoType) => {
-    console.log("Login Data:", data);
+  const onsubmit = () => {
+    loginWithRedirect();
   };
 
   return (
@@ -49,32 +39,17 @@ export const LoginForm = () =>  {
           }
         />
         <CardContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          <Button
+            onClick={onsubmit}
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
           >
-            <TextField
-              label="メールアドレス"
-              type="email"
-              {...register("userId")}
-              error={!!errors.userId}
-              helperText={errors.userId?.message}
-              fullWidth
-            />
-            <TextField
-              label="パスワード"
-              type="password"
-              {...register("password")}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              fullWidth
-            />
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              ログイン
-            </Button>
-          </form>
+            ログイン
+          </Button>
         </CardContent>
       </Card>
     </div>
   );
-}
+};
